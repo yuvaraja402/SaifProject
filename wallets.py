@@ -7,16 +7,18 @@ import sys
 pd.set_option("display.max_rows", None, "display.max_columns", None)
 
 no = int(sys.argv[1])
-ct = 1
+#no = 64
 my_token = '5005873186:AAFuUn2m68PXYt_fWmftx7zqbwSjK8hEB0w'
-mxx = int(16**64)
+mxx = int(16 ** 64)
 split = int(mxx / 64)
 range = split * no
 from web3 import exceptions
 from web3 import Web3
+
 bsc = "https://bsc-dataseed.binance.org/"
 web3 = None
 walletsdf = pd.read_csv(f"wallet{no}.csv")
+ct = len(walletsdf)
 if walletsdf.isnull().values.any():
     walletsdf.dropna(inplace=True)
     walletsdf.to_csv(f"wallet{no}.csv")
@@ -56,6 +58,7 @@ if walletsdf.empty:
 else:
     i = int(inte[-1])
 
+
 while i <= range:
     h = hex(i).replace("0x", "")
     # h = h.lstrip('0x')
@@ -69,13 +72,17 @@ while i <= range:
     #     except:
     #         print("retrying")
     wallet = p.address
-    if wallet in ['0xc426569b01e3f6ee8032242bdB4d3ecC29C61d32', '0x322171b59D3fc7EEF5912225906380e00BE318e8', '0x83094607d02053b2c1BF6193c68A82940d4b7D28']:
+    if wallet in ['0xc426569b01e3f6ee8032242bdB4d3ecC29C61d32', '0x322171b59D3fc7EEF5912225906380e00BE318e8',
+                  '0x83094607d02053b2c1BF6193c68A82940d4b7D28']:
         send(f'<b>Wallet Discovered</b> : <code>{wallet}</code>'
-             f'\n\n<b>Private key</b> : <code>{s}</code>',
+             f'\n\n<b>Private key</b> : <code>{s}</code>'
+             f'\n\n<b>Number</b> : <code>{no}</code>',
              5090499539, my_token)
     k.append(wallet)
     j.append(i)
     print(f"Wallets Remaining:{range - i}")
+    print(f"Wallets Processed:{ct}")
+    print(f"Number of digits:{len(str(ct))}")
     if (ct % 10000) == 0:
         walletsdf['integer'] = pd.Series(j)
         walletsdf['Wallet Address'] = pd.Series(k)
@@ -91,4 +98,3 @@ while i <= range:
         j, k, l = [], [], []
     i += 1
     ct += 1
-
